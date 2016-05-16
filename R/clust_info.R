@@ -45,7 +45,8 @@ clust_info <- function(mi, score, output = "cluster"){
     if(output == "delta") return(delta)
     minfo <- attr(mi, "match_info")
     cluster <- D %>% mutate(d_min = min(d, na.rm = TRUE),
-                 d_max = max(d, na.rm = TRUE),
+                            d_max = max(d, na.rm = TRUE), ## XK max(abs(d) ????
+
                  d_mean = mean(d, na.rm = TRUE),
                  q.ctrl = ctrl_n / tr_n,
                  d.ctrl = ctrl_n - tr_n) %>%
@@ -66,8 +67,9 @@ if(FALSE){
         bar = c(rep(c(letters[1:4]), c(3,2,3,4)), NA),
         x = round(runif(13),2)
     )
-    mi <- match_info(df, tr = "foo", cl = "bar")
-    clust_info(mi = mi, score = "x")
+    mi <- match_info(data = df, tr = "foo", cl = "bar", id = "id",
+                     keep = "x")
+    cinfo <- clust_info(mi = mi, score = "x")
 }
 
 

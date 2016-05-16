@@ -8,10 +8,13 @@
 ##' @param tr the binary treatment variable, as character
 ##' @param cl the clustering variable, as character
 ##' @param id the id variable (optional), as character. If this is
-##'     used then only the relevant variables will be
+##'     used then only the relevant variables (+ those specified by 'keep') will be
 ##'     returned (in the same order as data).
 ##' @param trv the value of the treatment (of variable \code{tr}), '1'
 ##'     by default
+##' @param keep character vector of the names of variables you'd like
+##'     to keep (id id is not  \code{NULL})
+##' @param warn warn in case of emergency?
 ##' @return data frame (\code{tbl_df}) with new parameters \code{tr_n} the number of
 ##'     treated within the cluster,  \code{ctrl_n} the number of
 ##'     controls within the cluster, \code{cl.weight} the weight,
@@ -34,7 +37,8 @@
 ##' @import  dplyr
 ##' @export
 
-match_info <- function(data, tr, cl, id = NULL, trv = 1){
+match_info <- function(data, tr, cl, id = NULL, trv = 1, keep = NULL,
+    warn = TRUE){
     if(! "dplyr" %in% installed.packages()[,1]){
         stop("[match_info] this function is coded in 'dplyr' which needs to be available")
     }
@@ -48,7 +52,7 @@ match_info <- function(data, tr, cl, id = NULL, trv = 1){
              "'."))
     }
     D <- if(!is.null(id)){
-        dplyr::select_(.data = data, .dots = c(id, tr, cl))
+        dplyr::select_(.data = data, .dots = c(id, tr, cl, keep))
     } else {
         data
     }
@@ -60,22 +64,23 @@ match_info <- function(data, tr, cl, id = NULL, trv = 1){
                        'ctrl_n'  = paste0("sum(",tr,"!='",trv,"')")) %>%
         dplyr::ungroup() %>%
         dplyr::mutate_(
-            'cl.weight' = paste0("paste0(ifelse(", tr,
-                           " == '", trv, "', 1/tr_n, 1/ctrl_n))"),
+            'cl.weight' = paste0("as.numeric(paste0(ifelse(", tr,
+                           " == '", trv, "', 1/tr_n, 1/ctrl_n)))"),
             'cid' =  paste0("paste0(", cl, ", ':', ifelse(", tr,
                             " == '", trv, "', 'tr', 'ctrl'), ifelse(",
                             tr, " == '", trv, "', tr_n, ctrl_n))")
             )
     Y <- dplyr::tbl_df(rbind(X, XNA))
-    attr(Y, "match_info") <- c('cl' = cl, 'tr' = tr, 'trv' = trv,
-                                  'id' = id) ## , 'data' = as.character(substitute(cluster)))
-    class(Y) <- c(class(Y), "match_info")
     if(!is.null(id)){
-        dplyr::left_join(select_(.data = data, id), Y, by = id)
+        R <- dplyr::left_join(select_(.data = data, id), Y, by = id)
     } else {
-        message("Beware! Order of data may have changed.")
-        Y
+        if(warn) message("Beware! Order of data may have changed.")
+        R <- Y
     }
+    class(R) <- c(class(Y), "match_info")
+    attr(R, "match_info") <- c('cl' = cl, 'tr' = tr, 'trv' = trv,
+                                  'id' = id)
+    R
 }
 
 if(FALSE){ ## example
@@ -88,6 +93,7 @@ if(FALSE){ ## example
     mi <- match_info(data = df, tr = "foo", cl = "bar")
     attributes(mi)
     match_info(data = df, tr = "foo", cl = "bar", id = "id")
+    match_info(data = df, tr = "foo", cl = "bar", id = "id", keep = "x")
     df$foo <- ifelse(df$foo == 1, "Treated", "Control")
     match_info(data = df, tr = "foo", cl = "bar", trv = "Treated")
 }

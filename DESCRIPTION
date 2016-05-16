@@ -1,7 +1,7 @@
 Package: miscmatch
 Type: Package
 Title: Miscellaneous Functions For Matching
-Version: 0.0.0.9001
+Version: 0.0.0.9002
 Author: Henrik Renlund
 Maintainer: Henrik Renlund <henrikrenlund@gmail.com>
 Description: Miscellaneous helper functions.

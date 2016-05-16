@@ -4,7 +4,7 @@
 \alias{match_info}
 \title{individual level information}
 \usage{
-match_info(data, tr, cl, id = NULL, trv = 1)
+match_info(data, tr, cl, id = NULL, trv = 1, keep = NULL, warn = TRUE)
 }
 \arguments{
 \item{data}{the data}
@@ -14,11 +14,16 @@ match_info(data, tr, cl, id = NULL, trv = 1)
 \item{cl}{the clustering variable, as character}
 
 \item{id}{the id variable (optional), as character. If this is
-used then only the relevant variables will be
+used then only the relevant variables (+ those specified by 'keep') will be
 returned (in the same order as data).}
 
 \item{trv}{the value of the treatment (of variable \code{tr}), '1'
 by default}
+
+\item{keep}{character vector of the names of variables you'd like
+to keep (id id is not  \code{NULL})}
+
+\item{warn}{warn in case of emergency?}
 }
 \value{
 data frame (\code{tbl_df}) with new parameters \code{tr_n} the number of
