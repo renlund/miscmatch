@@ -2,7 +2,7 @@
 ##'
 ##' Some additional details I find useful in connection with a
 ##'     fullmatch (or similar matching)
-##' @title Wot?
+##' @title cluster level information
 ##' @param mi output from \code{match_info}
 ##' @param score matching variable (1-dimensional)
 ##' @param output 'cluster' for statistics on cluster level, 'delta'
@@ -43,6 +43,7 @@ clust_info <- function(mi, score, output = "cluster"){
         select(-tMp_cOmPaReR, -tMp_DeLtA)
     delta <- D %>% ungroup() %>% select(cid, score, d)
     if(output == "delta") return(delta)
+    minfo <- attr(mi, "match_info")
     cluster <- D %>% mutate(d_min = min(d, na.rm = TRUE),
                  d_max = max(d, na.rm = TRUE),
                  d_mean = mean(d, na.rm = TRUE),
@@ -50,7 +51,9 @@ clust_info <- function(mi, score, output = "cluster"){
                  d.ctrl = ctrl_n - tr_n) %>%
         filter(row_number() == 1) %>%
         ungroup() %>%
-        select(-score, -cl, -tr, -d, -cl.weight)
+        select_(.dots = c(as.character(minfo['cl']), "tr_n", "ctrl_n", "cl.score:d.ctrl"))
+    ## select(-score, -cl, -tr, -d, -cl.weight)
+
     if(output == "cluster") return(cluster)
     if(output == "both") return(list(cluster = cluster, delta = delta))
     NULL

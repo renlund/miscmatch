@@ -2,7 +2,7 @@
 % Please edit documentation in R/match_info.R
 \name{match_info}
 \alias{match_info}
-\title{What?}
+\title{individual level information}
 \usage{
 match_info(data, tr, cl, id = NULL, trv = 1)
 }
@@ -43,7 +43,8 @@ df <- data_frame(
    bar = c(rep(c(letters[1:4]), c(3,2,3,4)), NA),
    x = round(runif(13),2)
 )
-match_info(data = df, tr = "foo", cl = "bar")
+mi <- match_info(data = df, tr = "foo", cl = "bar")
+attributes(mi)
 match_info(data = df, tr = "foo", cl = "bar", id = "id")
 df$foo <- ifelse(df$foo == 1, "Treated", "Control")
 match_info(data = df, tr = "foo", cl = "bar", trv = "Treated")

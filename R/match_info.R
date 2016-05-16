@@ -3,7 +3,7 @@
 ##'
 ##' Some additional details I find useful in connection with a
 ##'     fullmatch (or similar matching)
-##' @title What?
+##' @title individual level information
 ##' @param data the data
 ##' @param tr the binary treatment variable, as character
 ##' @param cl the clustering variable, as character
@@ -26,7 +26,8 @@
 ##'    bar = c(rep(c(letters[1:4]), c(3,2,3,4)), NA),
 ##'    x = round(runif(13),2)
 ##')
-##' match_info(data = df, tr = "foo", cl = "bar")
+##' mi <- match_info(data = df, tr = "foo", cl = "bar")
+##' attributes(mi)
 ##' match_info(data = df, tr = "foo", cl = "bar", id = "id")
 ##' df$foo <- ifelse(df$foo == 1, "Treated", "Control")
 ##' match_info(data = df, tr = "foo", cl = "bar", trv = "Treated")
@@ -66,6 +67,8 @@ match_info <- function(data, tr, cl, id = NULL, trv = 1){
                             tr, " == '", trv, "', tr_n, ctrl_n))")
             )
     Y <- dplyr::tbl_df(rbind(X, XNA))
+    attr(Y, "match_info") <- c('cl' = cl, 'tr' = tr, 'trv' = trv,
+                                  'id' = id) ## , 'data' = as.character(substitute(cluster)))
     class(Y) <- c(class(Y), "match_info")
     if(!is.null(id)){
         dplyr::left_join(select_(.data = data, id), Y, by = id)
@@ -82,7 +85,8 @@ if(FALSE){ ## example
         bar = c(rep(c(letters[1:4]), c(3,2,3,4)), NA),
         x = round(runif(13),2)
     )
-    match_info(data = df, tr = "foo", cl = "bar")
+    mi <- match_info(data = df, tr = "foo", cl = "bar")
+    attributes(mi)
     match_info(data = df, tr = "foo", cl = "bar", id = "id")
     df$foo <- ifelse(df$foo == 1, "Treated", "Control")
     match_info(data = df, tr = "foo", cl = "bar", trv = "Treated")

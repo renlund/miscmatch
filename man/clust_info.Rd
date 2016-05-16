@@ -2,9 +2,9 @@
 % Please edit documentation in R/clust_info.R
 \name{clust_info}
 \alias{clust_info}
-\title{Wot?}
+\title{cluster level information}
 \usage{
-clust_info(mi, score)
+clust_info(mi, score, output = "cluster")
 }
 \arguments{
 \item{mi}{output from \code{match_info}}
