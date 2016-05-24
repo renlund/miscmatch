@@ -57,19 +57,42 @@ match_info <- function(data, tr, cl, id = NULL, trv = 1, keep = NULL,
         data
     }
     XNA <- dplyr::filter_(.data = D, paste0("is.na(", cl, ")")) %>%
-        dplyr::mutate(tr_n = NA, ctrl_n = NA, cl.weight = NA, cid = NA)
+        dplyr::mutate(tr_n = NA, ctrl_n = NA,
+                      ate.weight = NA,
+                      att.weight = NA,
+                      atc.weight = NA,
+                      cid = NA)
     X <- dplyr::filter_(.data = D, paste0("!is.na(", cl, ")")) %>%
         dplyr::group_by_(cl) %>%
         dplyr::mutate_('tr_n' = paste0("sum(",tr,"=='",trv,"')") ,
                        'ctrl_n'  = paste0("sum(",tr,"!='",trv,"')")) %>%
         dplyr::ungroup() %>%
+        ## -- START TEST
         dplyr::mutate_(
-            'cl.weight' = paste0("as.numeric(paste0(ifelse(", tr,
-                           " == '", trv, "', 1/tr_n, 1/ctrl_n)))"),
-            'cid' =  paste0("paste0(", cl, ", ':', ifelse(", tr,
-                            " == '", trv, "', 'tr', 'ctrl'), ifelse(",
-                            tr, " == '", trv, "', tr_n, ctrl_n))")
-            )
+            'tMp.tReAt' = paste0(tr, " == '", trv, "'")
+        ) %>%
+        dplyr::mutate(
+            ate.weight = ifelse(tMp.tReAt, 1/tr_n, 1/ctrl_n),
+            att.weight = ifelse(tMp.tReAt, 1,
+                         ifelse(tr_n == 1, 1/ctrl_n, tr_n/ctrl_n)),
+            atc.weight = ifelse(!tMp.tReAt, 1,
+                         ifelse(ctrl_n == 1, 1/tr_n, ctrl_n/tr_n)),
+            cid = paste0(cl, ":",
+                         ifelse(tMp.tReAt, 'tr', 'ctrl'),
+                         ifelse(tMp.tReAt, tr_n, ctrl_n))
+        ) %>%
+        dplyr::mutate_(
+            'cid' =  paste0("paste0(", cl, ", ':', ifelse(tMp.tReAt, 'tr', 'ctrl'), ifelse(tMp.tReAt, tr_n, ctrl_n))")
+            ) %>%
+        select(-tMp.tReAt)
+        ## -- END TEST
+        ## dplyr::mutate_(
+        ##     'cl.weight' = paste0("as.numeric(paste0(ifelse(", tr,
+        ##                    " == '", trv, "', 1/tr_n, 1/ctrl_n)))"),
+        ##     'cid' =  paste0("paste0(", cl, ", ':', ifelse(", tr,
+        ##                     " == '", trv, "', 'tr', 'ctrl'), ifelse(",
+        ##                     tr, " == '", trv, "', tr_n, ctrl_n))")
+        ##     )
     Y <- dplyr::tbl_df(rbind(X, XNA))
     if(!is.null(id)){
         R <- dplyr::left_join(select_(.data = data, id), Y, by = id)
@@ -84,16 +107,19 @@ match_info <- function(data, tr, cl, id = NULL, trv = 1, keep = NULL,
 }
 
 if(FALSE){ ## example
+
     df <- data_frame(
-        id = 1:13,
-        foo = c(0,0,1, 0,1, 1,1,0, 1,1,0,0, 0),
-        bar = c(rep(c(letters[1:4]), c(3,2,3,4)), NA),
-        x = round(runif(13),2)
+        id = 1:14,
+        foo = c(0,0,1, 0,1, 1,1,0, 1,1,0,0,0, 0),
+        bar = c(rep(c(letters[1:4]), c(3,2,3,5)), NA),
+        x = round(runif(14),2)
     )
-    mi <- match_info(data = df, tr = "foo", cl = "bar")
+
+    (mi <- match_info(data = df, tr = "foo", cl = "bar"))
     attributes(mi)
     match_info(data = df, tr = "foo", cl = "bar", id = "id")
     match_info(data = df, tr = "foo", cl = "bar", id = "id", keep = "x")
     df$foo <- ifelse(df$foo == 1, "Treated", "Control")
     match_info(data = df, tr = "foo", cl = "bar", trv = "Treated")
+
 }
