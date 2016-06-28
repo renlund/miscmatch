@@ -21,14 +21,18 @@ returned (in the same order as data).}
 by default}
 
 \item{keep}{character vector of the names of variables you'd like
-to keep (id id is not  \code{NULL})}
+to keep (if id is not  \code{NULL})}
 
 \item{warn}{warn in case of emergency?}
 }
 \value{
 data frame (\code{tbl_df}) with new parameters \code{tr_n} the number of
     treated within the cluster,  \code{ctrl_n} the number of
-    controls within the cluster, \code{cl.weight} the weight,
+    controls within the cluster, \code{ate.weight} the weight for
+    calculating the average treatment effect, \code{att.weight}
+    the weight for calculating the average treatment effect for
+    the treated, \code{atc.weight} the weight for calculating the
+    average treatment effect for the controls,
     \code{cid} for describing the match it is useful to have a
     'cluster id', use this with e.g. \code{dplyr::group_by(tr, cid)} and
     \code{summarise} with functions using \code{weight =

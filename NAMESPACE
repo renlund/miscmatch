@@ -2,4 +2,9 @@
 
 export(clust_info)
 export(match_info)
+export(surv_curv)
 import(dplyr)
+import(survival)
+importFrom(broom,tidy)
+importFrom(stats,as.formula)
+importFrom(tidyr,separate)

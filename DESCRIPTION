@@ -1,11 +1,14 @@
 Package: miscmatch
 Type: Package
 Title: Miscellaneous Functions For Matching
-Version: 0.0.0.9004
+Version: 0.0.0.9006
 Author: Henrik Renlund
 Maintainer: Henrik Renlund <henrikrenlund@gmail.com>
 Description: Miscellaneous helper functions.
 License: GPL-3
 LazyData: TRUE
 RoxygenNote: 5.0.1
-Depends: dplyr
+Depends: dplyr,
+         survival,
+         broom
+Suggest: ggplot2

@@ -13,11 +13,15 @@
 ##' @param trv the value of the treatment (of variable \code{tr}), '1'
 ##'     by default
 ##' @param keep character vector of the names of variables you'd like
-##'     to keep (id id is not  \code{NULL})
+##'     to keep (if id is not  \code{NULL})
 ##' @param warn warn in case of emergency?
 ##' @return data frame (\code{tbl_df}) with new parameters \code{tr_n} the number of
 ##'     treated within the cluster,  \code{ctrl_n} the number of
-##'     controls within the cluster, \code{cl.weight} the weight,
+##'     controls within the cluster, \code{ate.weight} the weight for
+##'     calculating the average treatment effect, \code{att.weight}
+##'     the weight for calculating the average treatment effect for
+##'     the treated, \code{atc.weight} the weight for calculating the
+##'     average treatment effect for the controls,
 ##'     \code{cid} for describing the match it is useful to have a
 ##'     'cluster id', use this with e.g. \code{dplyr::group_by(tr, cid)} and
 ##'     \code{summarise} with functions using \code{weight =
@@ -39,9 +43,9 @@
 
 match_info <- function(data, tr, cl, id = NULL, trv = 1, keep = NULL,
     warn = TRUE){
-    if(! "dplyr" %in% installed.packages()[,1]){
-        stop("[match_info] this function is coded in 'dplyr' which needs to be available")
-    }
+    ## if(! "dplyr" %in% installed.packages()[,1]){
+    ##     stop("[match_info] this function is coded in 'dplyr' which needs to be available")
+    ## }
     m_i_out.names <- c("tr_n", "ctrl_n", "cl.weight", "cid")
     if(any(c(tr, cl, id) %in% m_i_out.names)){
         stop(paste0("[match_info] names of data conflicts with created variables (",
@@ -72,7 +76,8 @@ match_info <- function(data, tr, cl, id = NULL, trv = 1, keep = NULL,
             'tMp.tReAt' = paste0(tr, " == '", trv, "'")
         ) %>%
         dplyr::mutate(
-            ate.weight = ifelse(tMp.tReAt, 1/tr_n, 1/ctrl_n),
+            ## ate.weight = ifelse(tMp.tReAt, 1/tr_n, 1/ctrl_n),
+            ate.weight = ifelse(tMp.tReAt, (ctrl_n+tr_n)/(2*tr_n), (ctrl_n+tr_n)/(2*ctrl_n)),
             att.weight = ifelse(tMp.tReAt, 1,
                          ifelse(tr_n == 1, 1/ctrl_n, tr_n/ctrl_n)),
             atc.weight = ifelse(!tMp.tReAt, 1,
@@ -85,14 +90,6 @@ match_info <- function(data, tr, cl, id = NULL, trv = 1, keep = NULL,
             'cid' =  paste0("paste0(", cl, ", ':', ifelse(tMp.tReAt, 'tr', 'ctrl'), ifelse(tMp.tReAt, tr_n, ctrl_n))")
             ) %>%
         select(-tMp.tReAt)
-        ## -- END TEST
-        ## dplyr::mutate_(
-        ##     'cl.weight' = paste0("as.numeric(paste0(ifelse(", tr,
-        ##                    " == '", trv, "', 1/tr_n, 1/ctrl_n)))"),
-        ##     'cid' =  paste0("paste0(", cl, ", ':', ifelse(", tr,
-        ##                     " == '", trv, "', 'tr', 'ctrl'), ifelse(",
-        ##                     tr, " == '", trv, "', tr_n, ctrl_n))")
-        ##     )
     Y <- dplyr::tbl_df(rbind(X, XNA))
     if(!is.null(id)){
         R <- dplyr::left_join(select_(.data = data, id), Y, by = id)

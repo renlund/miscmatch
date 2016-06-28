@@ -8,17 +8,19 @@
 ##' @param output 'cluster' for statistics on cluster level, 'delta'
 ##'     for score differences on individual level and 'both' for both
 ##'     (as list)
+##' @importFrom tidyr separate
+##' @import dplyr
 ##' @return data frame of info, or list of data frames
 ##' @author Henrik Renlund
 ##' @export
 
 clust_info <- function(mi, score, output = "cluster"){
-    if(! "dplyr" %in% installed.packages()[,1]){
-        stop("[match_info] this function is coded in 'dplyr' which needs to be available")
-    }
-    if(! "tidyr" %in% installed.packages()[,1]){
-        stop("[match_info] this function is coded in 'tidyr' which needs to be available")
-    }
+    ## if(! "dplyr" %in% installed.packages()[,1]){
+    ##     stop("[match_info] this function is coded in 'dplyr' which needs to be available")
+    ## }
+    ## if(! "tidyr" %in% installed.packages()[,1]){
+    ##     stop("[match_info] this function is coded in 'tidyr' which needs to be available")
+    ## }
     if(!"match_info" %in% class(mi)){
         warning("match_loc is designed for objects created by match_info")
     }
