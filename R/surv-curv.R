@@ -12,6 +12,7 @@
 ##' @param w weight or name of variable that provides weights
 ##' @param prefix prefix values for times and events
 ##' @param progress primitive displayer of progress
+##' @param stringsAsFactors logical, if TRUE will keep ordering of ingoing stuff
 ##' @import survival
 ##' @importFrom broom tidy
 ##' @importFrom stats as.formula
@@ -35,11 +36,13 @@
 ##'           strata = "strutt", glist = "gsak")
 surv_curv <- function(data, surv, strata = NULL, glist = NULL, w = NULL,
                       prefix = c(event = "ev.", time = "t."),
-                      progress = FALSE){
+                      progress = FALSE,
+                      stringsAsFactors = TRUE){
     N <- nrow(data)
     if(is.null(w)) w <- rep(1, N)
     if(is.character(w)) w <- data[[w]]
     if(is.null(glist)) glist <- list(All = rep(TRUE, N))
+    glist_lev <- names(glist)
     if(!is.list(glist)) glist <- make_glist(glist, ref = data)
     if(is.null(strata)){
         data$strata <- factor(rep("no strata", N))
@@ -48,32 +51,42 @@ surv_curv <- function(data, surv, strata = NULL, glist = NULL, w = NULL,
     if(!is.factor(data[[strata]])){
         data[[strata]] <- factor(data[[strata]])
     }
-    lev <- levels(data[[strata]])
+    strata_lev <- levels(data[[strata]])
     if(!all(surv %in% names(data))){
+        ## if variables are not of class Surv they must have consistent
+        ## naming, with the same prefix for the time- and event variable, resp.
         for(i in seq_along(surv)){
-            tryCatch(
-            {ti <- get(paste0(prefix["time"], surv[i]), data)},
-            error = function(e) stop(paste0("cant find ", surv,
-                                            " in the data"))
+            ti <- tryCatch(
+                expr = {
+                    get(paste0(prefix["time"], surv[i]), data)
+                },
+                error = function(e){
+                    stop(paste0(" oops! cant find time ", surv,
+                                " in the data\n "))
+                }
             )
-            tryCatch(
-            {ev <- get(paste0(prefix["event"], surv[i]), data)},
-            error = function(e) stop(paste0("cant find ", surv,
-                                            " in the data"))
+            ev <- tryCatch(
+                expr = {
+                    get(paste0(prefix["event"], surv[i]), data)
+                },
+                error = function(e){
+                    stop(paste0(" oopsie! cant find event ", surv,
+                                " in the data\n"))
+                }
             )
             data[[surv[i]]] <- survival::Surv(time = ti, event = ev)
         }
     }
     R <- NULL
     for(i in seq_along(glist)){
-        for(j in seq_along(lev)){
-            filter <- glist[[i]] & data[[strata]] == lev[j]
+        for(j in seq_along(strata_lev)){
+            filter <- glist[[i]] & data[[strata]] == strata_lev[j]
             X <- data[filter, ]
             W <- w[filter]
             for(k in seq_along(surv)){
                 if(progress){
                     cat(paste0(i, "/", length(glist), ", ",
-                               paste0(j, "/", length(lev), ", ",
+                               paste0(j, "/", length(strata_lev), ", ",
                                       paste0(k, "/", length(surv), "\n"))))
                 }
                 f <- stats::as.formula(paste0(surv[k], " ~ 1"))
@@ -81,16 +94,23 @@ surv_curv <- function(data, surv, strata = NULL, glist = NULL, w = NULL,
                   survival::survfit(formula = f, data = X, weight = W)
                 )
                 tmp$outcome <- surv[k]
-                tmp$strata <- lev[j]
+                tmp$strata <- strata_lev[j]
                 tmp$group <- names(glist)[i]
                 R <- if(is.null(R)) tmp else rbind(R, tmp)
             }
         }
     }
+    if(stringsAsFactors){
+        R$outcome <- factor(R$outcome, levels = surv)
+        R$strata <- factor(R$strata, levels = strata_lev)
+        R$group <- factor(R$group, levels = glist_lev)
+    }
     dplyr::tbl_df(R)
 }
 
 #' helper function for 'surv_curv'
+#' @param x thing to create glist from
+#' @param ref reference for thing
 make_glist <- function(x, ref = NULL){
     if(!is.null(ref)){
         if(is.data.frame(ref)){
@@ -111,6 +131,7 @@ make_glist <- function(x, ref = NULL){
     }
     g
 }
+
 
 if(FALSE){
 

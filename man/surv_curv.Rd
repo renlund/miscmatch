@@ -5,7 +5,8 @@
 \title{multiple survival curves}
 \usage{
 surv_curv(data, surv, strata = NULL, glist = NULL, w = NULL,
-  prefix = c(event = "ev.", time = "t."), progress = FALSE)
+  prefix = c(event = "ev.", time = "t."), progress = FALSE,
+  stringsAsFactors = TRUE)
 }
 \arguments{
 \item{data}{the data}
@@ -24,6 +25,8 @@ in 'data'}
 \item{prefix}{prefix values for times and events}
 
 \item{progress}{primitive displayer of progress}
+
+\item{stringsAsFactors}{logical, if TRUE will keep ordering of ingoing stuff}
 }
 \value{
 A \code{tbl_df} with an \code{rbind}ed \code{broom::tidy}'d

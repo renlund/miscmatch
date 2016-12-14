@@ -8,8 +8,7 @@
 ##' @param output 'cluster' for statistics on cluster level, 'delta'
 ##'     for score differences on individual level and 'both' for both
 ##'     (as list)
-##' @importFrom tidyr separate
-##' @import dplyr
+##' @import dplyr tidyr
 ##' @return data frame of info, or list of data frames
 ##' @author Henrik Renlund
 ##' @export
@@ -26,6 +25,11 @@ clust_info <- function(mi, score, output = "cluster"){
     }
     if(!output %in% c("cluster", "delta", "both")){
         stop("wrong output argument")
+    }
+    if(FALSE){
+        cOmPaReR = NULL; cid = NULL; cl = NULL; ctrl_n = NULL;
+        d = NULL; tMp.tReAt = NULL; tMp_DeLtA = NULL;
+        tr = NULL; tr_n = NULL
     }
     D <- mi %>% rename_("score" = score) %>%
         tidyr::separate(col = cid, into = c("cl", "tr"),

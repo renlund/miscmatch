@@ -46,6 +46,9 @@ match_info <- function(data, tr, cl, id = NULL, trv = 1, keep = NULL,
     ## if(! "dplyr" %in% installed.packages()[,1]){
     ##     stop("[match_info] this function is coded in 'dplyr' which needs to be available")
     ## }
+    if(FALSE){
+        ctrl_n = NULL; tMp.tReAt = NULL; tr_n = NULL
+    }
     m_i_out.names <- c("tr_n", "ctrl_n", "cl.weight", "cid")
     if(any(c(tr, cl, id) %in% m_i_out.names)){
         stop(paste0("[match_info] names of data conflicts with created variables (",
