@@ -42,8 +42,8 @@ surv_curv <- function(data, surv, strata = NULL, glist = NULL, w = NULL,
     if(is.null(w)) w <- rep(1, N)
     if(is.character(w)) w <- data[[w]]
     if(is.null(glist)) glist <- list(All = rep(TRUE, N))
-    glist_lev <- names(glist)
     if(!is.list(glist)) glist <- make_glist(glist, ref = data)
+    glist_lev <- names(glist)
     if(is.null(strata)){
         data$strata <- factor(rep("no strata", N))
         strata <- "strata"
