@@ -40,7 +40,7 @@ create multiple survival curves for multiple endpoints,
 }
 \examples{
 n = 1200
-df <- data_frame(
+df <- data.frame(
         t.foo = abs(rnorm(n, 10, 2)),
         ev.foo = rbinom(n, 1, 0.2),
         t.bar = abs(rnorm(n, 10, 3)),
@@ -52,4 +52,3 @@ df <- data_frame(
 surv_curv(data = df, surv = c("foo", "bar"), w = "wait",
           strata = "strutt", glist = "gsak")
 }
-

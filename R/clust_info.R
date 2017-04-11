@@ -14,23 +14,17 @@
 ##' @export
 
 clust_info <- function(mi, score, output = "cluster"){
-    ## if(! "dplyr" %in% installed.packages()[,1]){
-    ##     stop("[match_info] this function is coded in 'dplyr' which needs to be available")
-    ## }
-    ## if(! "tidyr" %in% installed.packages()[,1]){
-    ##     stop("[match_info] this function is coded in 'tidyr' which needs to be available")
-    ## }
     if(!"match_info" %in% class(mi)){
         warning("match_loc is designed for objects created by match_info")
     }
     if(!output %in% c("cluster", "delta", "both")){
         stop("wrong output argument")
     }
-    if(FALSE){
-        cOmPaReR = NULL; cid = NULL; cl = NULL; ctrl_n = NULL;
-        d = NULL; tMp.tReAt = NULL; tMp_DeLtA = NULL;
-        tr = NULL; tr_n = NULL
-    }
+    ## if(FALSE){
+    ##     cOmPaReR = NULL; cid = NULL; cl = NULL; ctrl_n = NULL
+    ##     d = NULL; tMp.tReAt = NULL; tMp_DeLtA = NULL
+    ##     tr = NULL; tr_n = NULL
+    ## }
     D <- mi %>% rename_("score" = score) %>%
         tidyr::separate(col = cid, into = c("cl", "tr"),
                         sep = ":", remove = FALSE) %>%
@@ -57,7 +51,8 @@ clust_info <- function(mi, score, output = "cluster"){
                d.ctrl = ctrl_n - tr_n) %>%
         filter(row_number() == 1) %>%
         ungroup() %>%
-        select_(.dots = c(as.character(minfo['cl']), "tr_n", "ctrl_n", "cl.score:d.ctrl"))
+        select_(.dots = c(as.character(minfo['cl']),
+                          "tr_n", "ctrl_n", "cl.score:d.ctrl"))
     if(output == "cluster") return(cluster)
     if(output == "both") return(list(cluster = cluster, delta = delta))
     NULL

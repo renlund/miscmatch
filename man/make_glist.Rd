@@ -14,4 +14,3 @@ make_glist(x, ref = NULL)
 \description{
 helper function for 'surv_curv'
 }
-

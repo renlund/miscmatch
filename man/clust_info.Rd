@@ -28,4 +28,3 @@ Some additional details I find useful in connection with a
 \author{
 Henrik Renlund
 }
-

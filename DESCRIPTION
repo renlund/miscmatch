@@ -7,8 +7,10 @@ Maintainer: Henrik Renlund <henrikrenlund@gmail.com>
 Description: Miscellaneous helper functions.
 License: GPL-3
 LazyData: TRUE
-RoxygenNote: 5.0.1
-Depends: dplyr,
+RoxygenNote: 6.0.1
+URL: http://github.com/renlund/miscmatch
+BugReports: http://github.com/renlund/miscmatch/issues
+Imports: dplyr,
          survival,
          broom,
 	 tidyr

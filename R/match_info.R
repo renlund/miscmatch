@@ -27,7 +27,7 @@
 ##'     \code{summarise} with functions using \code{weight =
 ##'     cl.weight} to get stats for weighted treated and control statistics.
 ##' @author Henrik Renlund
-##' @examples df <- data_frame(
+##' @examples df <- data.frame(
 ##'    id = 1:13,
 ##'    foo = c(0,0,1, 0,1, 1,1,0, 1,1,0,0, 0),
 ##'    bar = c(rep(c(letters[1:4]), c(3,2,3,4)), NA),

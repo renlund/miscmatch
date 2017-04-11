@@ -46,7 +46,7 @@ Some additional details I find useful in connection with a
     fullmatch (or similar matching)
 }
 \examples{
-df <- data_frame(
+df <- data.frame(
    id = 1:13,
    foo = c(0,0,1, 0,1, 1,1,0, 1,1,0,0, 0),
    bar = c(rep(c(letters[1:4]), c(3,2,3,4)), NA),
@@ -61,4 +61,3 @@ match_info(data = df, tr = "foo", cl = "bar", trv = "Treated")
 \author{
 Henrik Renlund
 }
-
