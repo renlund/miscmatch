@@ -68,7 +68,7 @@ comb_match <- function(x, y, id, cl, tr, tr.value = 1, progress = FALSE){
     if(P) cat("... starting main loop\n")
     for(i in seq_along(trid1)){ ## i = 1
         if(P & i %in% floor(seq(1, n, length.out = 10 + 1)[-1])){
-            cat(prefix, round(100 * i/n, "percent done.", suffix, "\n"))
+            cat(round(100 * i/n), "percent done.\n")
         }
         id <- trid1[i]
         gc <- get_clust(id)
