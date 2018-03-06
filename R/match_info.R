@@ -106,6 +106,7 @@ match_info <- function(data, tr, cl, id = NULL, trv = 1, keep = NULL,
     R
 }
 
+
 if(FALSE){ ## example
 
     df <- data_frame(

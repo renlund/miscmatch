@@ -1,4 +1,6 @@
 miscmatch
 ---------
 
+Obsolete, refurbished (some of) these functions in the ['dm' package](http://github.com/renlund/dm).
+
 place for some miscellaneous functions relating to matching

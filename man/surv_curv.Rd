@@ -13,7 +13,7 @@ surv_curv(data, surv, strata = NULL, glist = NULL, w = NULL,
 
 \item{surv}{the \code{Surv} objects (as character, refering to
 variables in 'data') OR the common names of time + event, if
-these have a consistent prefix.}
+these have similar names (differing only in perfix)}
 
 \item{strata}{stratifying variable}
 

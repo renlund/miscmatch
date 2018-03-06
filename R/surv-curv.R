@@ -5,7 +5,7 @@
 ##' @param data the data
 ##' @param surv the \code{Surv} objects (as character, refering to
 ##'     variables in 'data') OR the common names of time + event, if
-##'     these have a consistent prefix.
+##'     these have similar names (differing only in perfix)
 ##' @param strata stratifying variable
 ##' @param glist a grouping list, or the name of a grouping variable
 ##'     in 'data'
@@ -108,9 +108,9 @@ surv_curv <- function(data, surv, strata = NULL, glist = NULL, w = NULL,
     dplyr::tbl_df(R)
 }
 
-#' helper function for 'surv_curv'
-#' @param x thing to create glist from
-#' @param ref reference for thing
+## helper function for 'surv_curv'
+## @param x thing to create glist from
+## @param ref reference for thing
 make_glist <- function(x, ref = NULL){
     if(!is.null(ref)){
         if(is.data.frame(ref)){
@@ -131,7 +131,6 @@ make_glist <- function(x, ref = NULL){
     }
     g
 }
-
 
 if(FALSE){
 
